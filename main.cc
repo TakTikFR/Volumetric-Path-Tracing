@@ -7,6 +7,7 @@
 #include "diffuse_light.hh"
 #include "image.hh"
 #include "metal_texture.hh"
+#include "noise_texture.hh"
 #include "object.hh"
 #include "point3.hh"
 #include "ray.hh"
@@ -17,7 +18,7 @@
 #include "vector3.hh"
 
 constexpr int MAX_DEPTH = 50;
-constexpr int SAMPLES = 5000;
+constexpr int SAMPLES = 500;
 
 RGB rayColor(const Ray &ray, const Scene &scene, int depth)
 {
@@ -97,13 +98,13 @@ int main()
     // ─── LE BLOC CENTRAL (Pour tester ton Perlin) ───────────────────────────
     // Pour l'instant, c'est un bloc gris clair. C'est ici que tu mettras ta
     // NoiseTexture !
-    auto *block_mat = new UniformeTexture(RGB(200, 200, 200));
+    auto *block_mat = new NoiseTexture(RGB(255, 255, 255), 4.0);
     scene.addObject(
         new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), block_mat));
 
     // ─── CAMÉRA ET IMAGE ────────────────────────────────────────────────────
-    constexpr int width = 1920; // Résolution basse pour tester vite
-    constexpr int height = 1080; // Format carré classique pour une Cornell Box
+    constexpr int width = 500; // Résolution basse pour tester vite
+    constexpr int height = 500; // Format carré classique pour une Cornell Box
     Image image(width, height);
 
     // On recule la caméra et on regarde le centre de la pièce
