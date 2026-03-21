@@ -1,5 +1,7 @@
 #include "image.hh"
 
+#include <cmath>
+
 void Image::checkBounds(int x, int y) const
 {
     if (x < 0 || x >= width || y < 0 || y >= height)
@@ -39,8 +41,24 @@ void Image::save(const std::string &filepath) const
         for (int i = 0; i < width; ++i)
         {
             const RGB &p = get(i, j);
-            file << static_cast<int>(p.r) << ' ' << static_cast<int>(p.g) << ' '
-                 << static_cast<int>(p.b) << '\n';
+            double r_norm = p.r / 255.0;
+            double g_norm = p.g / 255.0;
+            double b_norm = p.b / 255.0;
+
+            // gamma correction
+            r_norm = std::sqrt(std::max(0.0, r_norm));
+            g_norm = std::sqrt(std::max(0.0, g_norm));
+            b_norm = std::sqrt(std::max(0.0, b_norm));
+
+            // 3. On repasse en 0-255 avec le clamp de sécurité
+            int ir = static_cast<int>(
+                std::max(0.0, std::min(255.0, r_norm * 255.0)));
+            int ig = static_cast<int>(
+                std::max(0.0, std::min(255.0, g_norm * 255.0)));
+            int ib = static_cast<int>(
+                std::max(0.0, std::min(255.0, b_norm * 255.0)));
+
+            file << ir << ' ' << ig << ' ' << ib << '\n';
         }
     }
 }
@@ -52,21 +70,18 @@ RGB RGB::operator+(const RGB &other) const
 
 RGB RGB::operator*(const RGB &other) const
 {
-    return RGB(static_cast<uint8_t>(r * other.r / 255.0),
-               static_cast<uint8_t>(g * other.g / 255.0),
-               static_cast<uint8_t>(b * other.b / 255.0));
+    return RGB((r * other.r) / 255.0, (g * other.g) / 255.0,
+               (b * other.b) / 255.0);
 }
 
 RGB RGB::operator*(double scalar) const
 {
-    return RGB(static_cast<uint8_t>(r * scalar),
-               static_cast<uint8_t>(g * scalar),
-               static_cast<uint8_t>(b * scalar));
+    return RGB(r * scalar, g * scalar, b * scalar);
 }
 
 RGB RGB::operator/(double scalar) const
 {
-    return RGB(static_cast<uint8_t>(r / scalar),
-               static_cast<uint8_t>(g / scalar),
-               static_cast<uint8_t>(b / scalar));
+    if (scalar == 0.0)
+        return RGB(0, 0, 0);
+    return RGB(r / scalar, g / scalar, b / scalar);
 }

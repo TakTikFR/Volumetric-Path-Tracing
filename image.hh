@@ -8,7 +8,7 @@
 
 struct RGB
 {
-    uint8_t r, g, b;
+    double r, g, b;
 
     RGB(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0)
         : r(r)

@@ -87,7 +87,7 @@ Vector3 Vector3::random_unit_vector()
 {
     while (true)
     {
-        Vector3 r = random_vector();
+        Vector3 r = random_vector(-1.0, 1.0);
         double lensq = r.dot(r);
         if (1e-160 < lensq && lensq <= 1)
             return r / sqrt(lensq);

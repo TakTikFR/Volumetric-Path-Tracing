@@ -18,6 +18,10 @@ public:
     virtual RGB getColor() const = 0;
     virtual bool scatter(const Ray &ray, const Hit &hit, RGB &attenuation,
                          Ray &scattered) const = 0;
+    virtual RGB emitted(const Point3 &point) const
+    {
+        return RGB(0, 0, 0);
+    }
 
 protected:
     RGB color_;
