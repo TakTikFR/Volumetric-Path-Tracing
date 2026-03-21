@@ -17,7 +17,7 @@
 #include "vector3.hh"
 
 constexpr int MAX_DEPTH = 50;
-constexpr int SAMPLES = 100;
+constexpr int SAMPLES = 200;
 
 RGB rayColor(const Ray &ray, const Scene &scene, int depth)
 {
@@ -132,6 +132,7 @@ int main()
     std::cout << "Début du rendu : " << width << "x" << height << " pixels."
               << std::endl;
 
+    #pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < height; ++j)
     {
         std::cout << "\rLignes restantes : " << (height - j) << ' '

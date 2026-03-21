@@ -1,5 +1,6 @@
 CXX      = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O0 -g -MMD -MP
+CXXFLAGS = -std=c++20 -Wall -Wextra -O3 -g -MMD -MP -fopenmp
+LDFLAGS  = -fopenmp
 TARGET   = ray_tracing
 
 SRCS_CC  = $(wildcard *.cc)
@@ -12,7 +13,7 @@ DEPS     = $(OBJS:.o=.d)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c $< -o $@

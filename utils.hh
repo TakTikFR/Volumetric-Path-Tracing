@@ -1,13 +1,15 @@
 #pragma once
 
 #include <cmath>
-#include <cstdlib>
+#include <random>
 
 #include "vector3.hh"
 
 inline double random_double()
 {
-    return std::rand() / (RAND_MAX + 1.0);
+    thread_local std::mt19937 generator(std::random_device{}());
+    thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    return distribution(generator);
 }
 
 inline double random_double(double min, double max)
