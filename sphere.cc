@@ -1,41 +1,46 @@
 #include "sphere.hh"
 
-std::optional<Hit> Sphere::intersect(const Ray &ray) const {
-  constexpr double tMin = 0.001;
-  constexpr double tMax = 1e30;
+std::optional<Hit> Sphere::intersect(const Ray &ray) const
+{
+    constexpr double tMin = 0.001;
+    constexpr double tMax = 1e30;
 
-  Vector3 oc = center - ray.origin;
-  double a = ray.direction.dot(ray.direction);
-  double h = ray.direction.dot(oc);
-  double c = oc.dot(oc) - radius * radius;
-  double discriminant = h * h - a * c;
+    Vector3 oc = center - ray.origin;
+    double a = ray.direction.dot(ray.direction);
+    double h = ray.direction.dot(oc);
+    double c = oc.dot(oc) - radius * radius;
+    double discriminant = h * h - a * c;
 
-  if (discriminant < 0) {
-    return std::nullopt;
-  }
+    if (discriminant < 0)
+    {
+        return std::nullopt;
+    }
 
-  double sqrtd = std::sqrt(discriminant);
-  double t = (h - sqrtd) / a;
-  if (t <= tMin || tMax <= t) {
-    t = (h + sqrtd) / a;
-
+    double sqrtd = std::sqrt(discriminant);
+    double t = (h - sqrtd) / a;
     if (t <= tMin || tMax <= t)
-      return std::nullopt;
-  }
+    {
+        t = (h + sqrtd) / a;
 
-  Point3 point = ray.at(t);
-  Vector3 normal = (point - center) / radius;
+        if (t <= tMin || tMax <= t)
+            return std::nullopt;
+    }
 
-  Hit hit(point, normal, t);
-  hit.set_face_normal(ray, normal);
+    Point3 point = ray.at(t);
+    Vector3 n = normal(point);
 
-  return hit;
+    Hit hit(point, n, t);
+    hit.set_face_normal(ray, n);
+
+    return hit;
 }
 
-Vector3 Sphere::normal(const Point3 &point) const {
-  return (point - center) / radius;
+Vector3 Sphere::normal(const Point3 &point) const
+{
+    return (point - center) / radius;
 }
 
-Texture_Material* Sphere::getMaterial() const {
-  return textureMaterial_;
+Texture_Material *Sphere::getMaterial() const
+{
+    return textureMaterial_;
 }

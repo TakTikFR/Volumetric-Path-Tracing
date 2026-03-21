@@ -1,15 +1,19 @@
 #pragma once
 
-#include "texture_material.hh"
 #include "hit.hh"
+#include "texture_material.hh"
 
-class MetalTexture : public Texture_Material {
+class MetalTexture : public Texture_Material
+{
 public:
-
-    explicit MetalTexture(const RGB& color)
+    explicit MetalTexture(const RGB &color)
         : Texture_Material(color)
     {}
 
-    bool scatter(const Ray& ray, const Hit& hit, RGB& color, Ray& scattered) const override;
-    RGB getColor() const override { return color_; }
+    bool scatter(const Ray &ray, const Hit &hit, RGB &color,
+                 Ray &scattered) const override;
+    RGB getColor() const override
+    {
+        return color_;
+    }
 };

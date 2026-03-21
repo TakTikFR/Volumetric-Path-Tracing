@@ -3,10 +3,11 @@
 #include "point3.hh"
 #include "vector3.hh"
 
-class Camera {
+class Camera
+{
 public:
-    Point3  center;
-    Point3  target;
+    Point3 center;
+    Point3 target;
     Vector3 up;
 
     double alpha;
@@ -31,7 +32,7 @@ public:
         , z_min(z_min)
     {}
 
-    Camera(const Point3& center, const Point3& target, const Vector3& up,
+    Camera(const Point3 &center, const Point3 &target, const Vector3 &up,
            double alpha, double beta, double z_min)
         : center(center)
         , target(target)
