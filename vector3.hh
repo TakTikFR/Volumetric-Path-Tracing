@@ -39,3 +39,6 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out, const Vector3 &v);
 };
+
+Vector3 random_vector();
+Vector3 random_vector(double min, double max);

@@ -17,7 +17,7 @@
 #include "vector3.hh"
 
 constexpr int MAX_DEPTH = 50;
-constexpr int SAMPLES = 200;
+constexpr int SAMPLES = 5000;
 
 RGB rayColor(const Ray &ray, const Scene &scene, int depth)
 {
@@ -102,8 +102,8 @@ int main()
         new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), block_mat));
 
     // ─── CAMÉRA ET IMAGE ────────────────────────────────────────────────────
-    constexpr int width = 400; // Résolution basse pour tester vite
-    constexpr int height = 400; // Format carré classique pour une Cornell Box
+    constexpr int width = 1920; // Résolution basse pour tester vite
+    constexpr int height = 1080; // Format carré classique pour une Cornell Box
     Image image(width, height);
 
     // On recule la caméra et on regarde le centre de la pièce
@@ -132,7 +132,7 @@ int main()
     std::cout << "Début du rendu : " << width << "x" << height << " pixels."
               << std::endl;
 
-    #pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < height; ++j)
     {
         std::cout << "\rLignes restantes : " << (height - j) << ' '
