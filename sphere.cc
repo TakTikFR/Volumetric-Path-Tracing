@@ -1,10 +1,7 @@
 #include "sphere.hh"
 
-std::optional<Hit> Sphere::intersect(const Ray &ray) const
+std::optional<Hit> Sphere::intersect(const Ray &ray, const interval &ray_int) const
 {
-    constexpr double tMin = 0.001;
-    constexpr double tMax = 1e30;
-
     Vector3 oc = center - ray.origin;
     double a = ray.direction.dot(ray.direction);
     double h = ray.direction.dot(oc);
@@ -18,11 +15,11 @@ std::optional<Hit> Sphere::intersect(const Ray &ray) const
 
     double sqrtd = std::sqrt(discriminant);
     double t = (h - sqrtd) / a;
-    if (t <= tMin || tMax <= t)
+    if (!ray_int.surrounds(t))
     {
         t = (h + sqrtd) / a;
 
-        if (t <= tMin || tMax <= t)
+        if (!ray_int.surrounds(t))
             return std::nullopt;
     }
 

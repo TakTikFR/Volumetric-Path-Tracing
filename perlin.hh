@@ -9,7 +9,6 @@ public:
     Perlin();
     double noise(const Point3 &p) const;
 
-private:
     static const int point_count = 256;
 
     Vector3 *ranvec;
@@ -23,4 +22,5 @@ private:
 
     static double trilinear_interpolation(Vector3 c[2][2][2], double u,
                                           double v, double w);
+    double turbulance(const Point3& p, int depth) const;
 };

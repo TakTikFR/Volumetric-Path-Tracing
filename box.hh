@@ -6,6 +6,7 @@
 #include "object.hh"
 #include "point3.hh"
 #include "texture_material.hh"
+#include "interval.hh"
 
 class Box : public Object
 {
@@ -26,7 +27,7 @@ public:
         , max_bound(max_bound)
     {}
 
-    std::optional<Hit> intersect(const Ray &ray) const override;
+    std::optional<Hit> intersect(const Ray &ray, const interval &ray_int) const override;
     Vector3 normal(const Point3 &point) const override;
     Texture_Material *getMaterial() const override;
 };

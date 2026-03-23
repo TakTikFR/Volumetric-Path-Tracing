@@ -7,6 +7,7 @@
 #include "ray.hh"
 #include "texture_material.hh"
 #include "vector3.hh"
+#include "interval.hh"
 
 class Object
 {
@@ -17,7 +18,7 @@ public:
 
     virtual ~Object() = default;
 
-    virtual std::optional<Hit> intersect(const Ray &ray) const = 0;
+    virtual std::optional<Hit> intersect(const Ray &ray, const interval &ray_int) const = 0;
     virtual Vector3 normal(const Point3 &point) const = 0;
     virtual Texture_Material *getMaterial() const = 0;
 

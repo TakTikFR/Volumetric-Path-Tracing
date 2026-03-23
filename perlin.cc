@@ -98,3 +98,17 @@ double Perlin::trilinear_interpolation(Vector3 c[2][2][2], double u, double v,
     }
     return accum;
 }
+
+double Perlin::turbulance(const Point3& p, int depth) const {
+    double accum = 0.0;
+    Point3 temp_p = p;
+    double weight = 1.0;
+
+    for (int i = 0; i < depth; i++) {
+        accum += weight * noise(temp_p);
+        weight *= 0.5;
+        temp_p = temp_p * 2;
+    }
+
+    return std::fabs(accum);
+}

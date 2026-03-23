@@ -1,6 +1,6 @@
 #include "box.hh"
 
-std::optional<Hit> Box::intersect(const Ray &ray) const
+std::optional<Hit> Box::intersect(const Ray &ray, const interval &ray_int) const
 {
     // en gros il y a un couloir volumétrique en X, en Y et en Z
     // si le rayon passe dans les 3 et bien le cube est touché
@@ -46,12 +46,10 @@ std::optional<Hit> Box::intersect(const Ray &ray) const
     if (tzMax < tMax)
         tMax = tzMax;
 
-    constexpr double tMinLimit = 0.001;
-    constexpr double tMaxLimit = 1e30;
-    if (tMin < tMinLimit || tMin > tMaxLimit)
+    if (!ray_int.surrounds(tMin))
     {
         tMin = tMax;
-        if (tMin < tMinLimit || tMin > tMaxLimit)
+        if (!ray_int.surrounds(tMin))
             return std::nullopt;
     }
 

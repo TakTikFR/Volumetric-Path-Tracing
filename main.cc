@@ -16,27 +16,28 @@
 #include "uniforme_texture.hh"
 #include "utils.hh"
 #include "vector3.hh"
+#include "interval.hh"
+#include "isotropic.hh"
+#include "homogeneous_volume.hh"
 
-constexpr int MAX_DEPTH = 50;
-constexpr int SAMPLES = 500;
+constexpr int MAX_DEPTH = 100;
+constexpr int SAMPLES = 1000;
 
 RGB rayColor(const Ray &ray, const Scene &scene, int depth)
 {
     if (depth <= 0)
         return RGB(0, 0, 0);
 
-    constexpr double tMin = 0.001;
-    constexpr double tMax = 1e30;
+    interval ray_int(0.001, infinity);
     Hit closestHit;
     Object *hitObj = nullptr;
-    double tClose = tMax;
 
     for (Object *obj : scene.objects)
     {
-        std::optional<Hit> result = obj->intersect(ray);
-        if (result && result->t >= tMin && result->t < tClose)
+        std::optional<Hit> result = obj->intersect(ray, ray_int);
+        if (result)
         {
-            tClose = result->t;
+            ray_int.max = result->t;
             closestHit = *result;
             hitObj = obj;
         }
@@ -98,9 +99,14 @@ int main()
     // ─── LE BLOC CENTRAL (Pour tester ton Perlin) ───────────────────────────
     // Pour l'instant, c'est un bloc gris clair. C'est ici que tu mettras ta
     // NoiseTexture !
-    auto *block_mat = new NoiseTexture(RGB(255, 255, 255), 4.0);
-    scene.addObject(
-        new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), block_mat));
+    //auto *block_mat = new Isotropic(RGB(255, 255, 255), 4.0);
+    //scene.addObject(
+    //    new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), block_mat));
+
+    auto *block_mat = new Isotropic(RGB(255, 255, 255), 1.0);
+    auto *box = new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), white);
+    auto *obj = new HomogeneousVolume(box, 1.0, block_mat);
+    scene.addObject(obj);
 
     // ─── CAMÉRA ET IMAGE ────────────────────────────────────────────────────
     constexpr int width = 500; // Résolution basse pour tester vite
