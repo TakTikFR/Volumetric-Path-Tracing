@@ -5,7 +5,10 @@
 #include "camera.hh"
 #include "dielectric_texture.hh"
 #include "diffuse_light.hh"
+#include "homogeneous_volume.hh"
 #include "image.hh"
+#include "interval.hh"
+#include "isotropic.hh"
 #include "metal_texture.hh"
 #include "noise_texture.hh"
 #include "object.hh"
@@ -16,12 +19,9 @@
 #include "uniforme_texture.hh"
 #include "utils.hh"
 #include "vector3.hh"
-#include "interval.hh"
-#include "isotropic.hh"
-#include "homogeneous_volume.hh"
 
 constexpr int MAX_DEPTH = 100;
-constexpr int SAMPLES = 1000;
+constexpr int SAMPLES = 500;
 
 RGB rayColor(const Ray &ray, const Scene &scene, int depth)
 {
@@ -99,8 +99,8 @@ int main()
     // ─── LE BLOC CENTRAL (Pour tester ton Perlin) ───────────────────────────
     // Pour l'instant, c'est un bloc gris clair. C'est ici que tu mettras ta
     // NoiseTexture !
-    //auto *block_mat = new Isotropic(RGB(255, 255, 255), 4.0);
-    //scene.addObject(
+    // auto *block_mat = new Isotropic(RGB(255, 255, 255), 4.0);
+    // scene.addObject(
     //    new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), block_mat));
 
     auto *block_mat = new Isotropic(RGB(255, 255, 255), 1.0);

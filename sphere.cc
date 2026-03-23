@@ -1,6 +1,7 @@
 #include "sphere.hh"
 
-std::optional<Hit> Sphere::intersect(const Ray &ray, const interval &ray_int) const
+std::optional<Hit> Sphere::intersect(const Ray &ray,
+                                     const interval &ray_int) const
 {
     Vector3 oc = center - ray.origin;
     double a = ray.direction.dot(ray.direction);

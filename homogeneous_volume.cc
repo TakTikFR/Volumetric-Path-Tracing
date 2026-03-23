@@ -1,20 +1,25 @@
 #include "homogeneous_volume.hh"
+
 #include <cmath>
+
 #include "utils.hh"
 
-
-std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray, const interval &ray_int) const
+std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray,
+                                                const interval &ray_int) const
 {
     std::optional<Hit> hit_in = boundary->intersect(ray, interval::universe);
     if (!hit_in)
         return std::nullopt;
 
-    std::optional<Hit> hit_out = boundary->intersect(ray, interval(hit_in->t + 0.0001, infinity));
+    std::optional<Hit> hit_out =
+        boundary->intersect(ray, interval(hit_in->t + 0.0001, infinity));
     if (!hit_out)
         return std::nullopt;
 
-    if (hit_in->t < ray_int.min) hit_in->t = ray_int.min;
-    if (hit_out->t > ray_int.max) hit_out->t = ray_int.max;
+    if (hit_in->t < ray_int.min)
+        hit_in->t = ray_int.min;
+    if (hit_out->t > ray_int.max)
+        hit_out->t = ray_int.max;
 
     if (hit_in->t >= hit_out->t)
         return std::nullopt;
@@ -31,10 +36,10 @@ std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray, const interval &
 
     double t = hit_in->t + hit_distance / ray_length;
     Point3 point = ray.at(t);
-    Vector3 n = Vector3(1,0,0);  // arbitrary
+    Vector3 n = Vector3(1, 0, 0); // arbitrary
 
     Hit hit(point, n, t);
-    hit.front_face = true;     // also arbitrary
+    hit.front_face = true; // also arbitrary
 
     return hit;
 }

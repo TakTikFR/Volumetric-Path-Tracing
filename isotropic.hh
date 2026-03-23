@@ -1,7 +1,7 @@
 #pragma once
 
-#include "texture_material.hh"
 #include "perlin.hh"
+#include "texture_material.hh"
 
 class Isotropic : public Texture_Material
 {

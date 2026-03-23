@@ -14,10 +14,9 @@ bool NoiseTexture::scatter(const Ray &ray, const Hit &hit, RGB &color,
         scatterDir = hit.normal;
 
     scattered = Ray(hit.point, scatterDir);
-    double n = 0.5
-        * (1
-           + noise.noise(hit.point
-                         * scale)); // récupérer un % de couleur, pas (-1, 1)
+    // double n = 0.5 * (1 + noise.noise(hit.point * scale)); // récupérer un %
+    // de couleur, pas (-1, 1)
+    double n = std::min(1.0, noise.fbm(hit.point * scale));
     color = RGB(color_.r * n, color_.g * n, color_.b * n);
 
     return true;

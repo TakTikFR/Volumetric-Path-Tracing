@@ -22,5 +22,6 @@ public:
 
     static double trilinear_interpolation(Vector3 c[2][2][2], double u,
                                           double v, double w);
-    double turbulance(const Point3& p, int depth) const;
+    double turbulance(const Point3 &p, int depth) const;
+    double fbm(const Point3 &p, int depth = 7) const;
 };
