@@ -3,23 +3,20 @@
 #include <cmath>
 
 #include "hit.hh"
+#include "material.hh"
 #include "object.hh"
 #include "point3.hh"
-#include "texture_material.hh"
 
 class Sphere : public Object
 {
 public:
-    Point3 center;
-    double radius;
-
     Sphere()
         : Object(nullptr)
         , center(0.0, 0.0, 0.0)
         , radius(1.0)
     {}
 
-    Sphere(const Point3 &center, double radius, Texture_Material *material)
+    Sphere(const Point3 &center, double radius, Material *material)
         : Object(material)
         , center(center)
         , radius(radius)
@@ -27,6 +24,10 @@ public:
 
     std::optional<Hit> intersect(const Ray &ray,
                                  const interval &ray_int) const override;
-    Vector3 normal(const Point3 &point) const override;
-    Texture_Material *getMaterial() const override;
+
+private:
+    Point3 center;
+    double radius;
+
+    Vector3 computeNormal(const Point3 &point) const;
 };

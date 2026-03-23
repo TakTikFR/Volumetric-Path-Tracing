@@ -25,20 +25,15 @@ std::optional<Hit> Sphere::intersect(const Ray &ray,
     }
 
     Point3 point = ray.at(t);
-    Vector3 n = normal(point);
+    Vector3 n = computeNormal(point);
 
-    Hit hit(point, n, t);
+    Hit hit(point, n, t, material_);
     hit.set_face_normal(ray, n);
 
     return hit;
 }
 
-Vector3 Sphere::normal(const Point3 &point) const
+Vector3 Sphere::computeNormal(const Point3 &point) const
 {
     return (point - center) / radius;
-}
-
-Texture_Material *Sphere::getMaterial() const
-{
-    return textureMaterial_;
 }
