@@ -3,14 +3,13 @@
 #include <vector>
 
 #include "camera.hh"
-#include "light.hh"
 #include "object.hh"
 
 class Scene
 {
 public:
     std::vector<Object *> objects;
-    std::vector<Light *> lights;
+    std::vector<Object *> lights;
     Camera camera;
 
     Scene() = default;
@@ -20,8 +19,9 @@ public:
     {
         objects.push_back(object);
     }
-    void addLight(Light *light)
+    void addLight(Object *light)
     {
+        objects.push_back(light);
         lights.push_back(light);
     }
 };

@@ -30,7 +30,7 @@ int main()
     auto *white = new Lambertian(white_tex);
     auto *red = new Lambertian(red_tex);
     auto *green = new Lambertian(green_tex);
-    auto *light_mat = new DiffuseLight(light_tex, 30.0);
+    auto *light_mat = new DiffuseLight(light_tex, 3.0);
 
     // ─── Room walls ────────────────────────────────────────────────────────
     // Floor
@@ -50,7 +50,7 @@ int main()
         new Box(Point3(5.0, 0.0, -5.0), Point3(5.1, 5.0, 5.0), green));
 
     // ─── Light (box on ceiling) ────────────────────────────────────────────
-    scene.addObject(
+    scene.addLight(
         new Box(Point3(-2.0, 4.89, -4.5), Point3(2.0, 5.0, -0.5), light_mat));
 
     // ─── Homogeneous volume ────────────────────────────────────────────────

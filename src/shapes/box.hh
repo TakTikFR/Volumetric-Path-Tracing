@@ -27,6 +27,8 @@ public:
                                  const interval &ray_int) const override;
 
     Vector3 computeNormal(const Point3 &point) const;
+    Vector3 random(const Point3& origin) const override;
+    double pdf_value(const Point3& origin, const Vector3& direction) const override;
 
 private:
     Point3 min_bound;
