@@ -3,6 +3,7 @@
 #include "box.hh"
 #include "camera.hh"
 #include "diffuse_light.hh"
+#include "henyey_greenstein.hh"
 #include "homogeneous_volume.hh"
 #include "image.hh"
 #include "isotropic.hh"
@@ -29,7 +30,7 @@ int main()
     auto *white = new Lambertian(white_tex);
     auto *red = new Lambertian(red_tex);
     auto *green = new Lambertian(green_tex);
-    auto *light_mat = new DiffuseLight(light_tex, 15.0);
+    auto *light_mat = new DiffuseLight(light_tex, 30.0);
 
     // ─── Room walls ────────────────────────────────────────────────────────
     // Floor
@@ -54,7 +55,7 @@ int main()
 
     // ─── Homogeneous volume ────────────────────────────────────────────────
     auto *volume_tex = new NoiseTexture(RGB(255, 255, 255), 1.0);
-    auto *volume_mat = new Isotropic(volume_tex);
+    auto *volume_mat = new HenyeyGreenstein(volume_tex, 0.0);
     auto *boundary =
         new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), white);
     scene.addObject(new HomogeneousVolume(boundary, 1.0, volume_mat));
@@ -70,7 +71,7 @@ int main()
     // ─── Render ────────────────────────────────────────────────────────────
     Renderer renderer;
     renderer.maxDepth = 100;
-    renderer.samplesPerPixel = 500;
+    renderer.samplesPerPixel = 1000;
 
     renderer.render(scene, camera, image);
     image.save("output.ppm");

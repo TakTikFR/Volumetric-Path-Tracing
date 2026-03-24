@@ -125,7 +125,7 @@ double Perlin::fbm(const Point3 &p, int depth) const
     {
         value += amplitude * std::abs(noise(temp_p));
         amplitude *= 0.5;
-		temp_p = temp_p * 2;
+        temp_p = temp_p * 2;
     }
 
     return value;

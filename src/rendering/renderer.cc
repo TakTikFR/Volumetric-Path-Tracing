@@ -34,6 +34,14 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
     RGB attenuation;
     Ray scattered;
 
+    if (closestHit.is_transmission)
+    {
+        return emitted
+            + rayColor(Ray(closestHit.point, ray.direction, ray.time), scene,
+                       depth - 1)
+            * closestHit.transmittance;
+    }
+
     if (material->scatter(ray, closestHit, attenuation, scattered))
         return emitted + (attenuation * rayColor(scattered, scene, depth - 1));
 
@@ -78,8 +86,9 @@ void Renderer::render(const Scene &scene, const Camera &camera,
                 double v = static_cast<double>(j) + random_double();
                 const Vector3 pixelPos =
                     pixel00 + pixelDeltaU * u + pixelDeltaV * v;
-                const Ray ray(camera.center,
-                              pixelPos - Vector3(camera.center));
+                Vector3 direction = pixelPos - Vector3(camera.center);
+                direction = direction.normalize();
+                const Ray ray(camera.center, direction);
 
                 RGB c = rayColor(ray, scene, maxDepth);
                 r += c.r;

@@ -6,8 +6,8 @@
 #include "ray.hh"
 #include "vector3.hh"
 
-bool Lambertian::scatter(const Ray & /*ray*/, const Hit &hit,
-                         RGB &attenuation, Ray &scattered) const
+bool Lambertian::scatter(const Ray & /*ray*/, const Hit &hit, RGB &attenuation,
+                         Ray &scattered) const
 {
     Vector3 scatterDir = hit.normal + Vector3::random_unit_vector();
 

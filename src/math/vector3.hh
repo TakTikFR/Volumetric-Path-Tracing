@@ -36,6 +36,7 @@ public:
     static Vector3 random_unit_vector();
     static Vector3 random_on_hemisphere(const Vector3 &normal);
     Vector3 reflect(Vector3 v, Vector3 n) const;
+    Vector3 cross(const Vector3 &v) const;
 
     friend std::ostream &operator<<(std::ostream &out, const Vector3 &v);
 };

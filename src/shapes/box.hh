@@ -26,9 +26,9 @@ public:
     std::optional<Hit> intersect(const Ray &ray,
                                  const interval &ray_int) const override;
 
+    Vector3 computeNormal(const Point3 &point) const;
+
 private:
     Point3 min_bound;
     Point3 max_bound;
-
-    Vector3 computeNormal(const Point3 &point) const;
 };

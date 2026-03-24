@@ -1,44 +1,63 @@
 #include "box.hh"
 
+#include <algorithm>
+
+#include "utils.hh"
+
 std::optional<Hit> Box::intersect(const Ray &ray, const interval &ray_int) const
 {
-    double tMin =
-        (min_bound.x - ray.origin.x) / ray.direction.x;
-    double tMax =
-        (max_bound.x - ray.origin.x) / ray.direction.x;
+    double tMin_x, tMax_x, tMin_y, tMax_y, tMin_z, tMax_z;
+
+    if (std::abs(ray.direction.x) < 1e-8)
+    {
+        if (ray.origin.x < min_bound.x || ray.origin.x > max_bound.x)
+            return std::nullopt;
+        tMin_x = -1e10;
+        tMax_x = 1e10;
+    }
+    else
+    {
+        tMin_x = (min_bound.x - ray.origin.x) / ray.direction.x;
+        tMax_x = (max_bound.x - ray.origin.x) / ray.direction.x;
+        if (tMin_x > tMax_x)
+            std::swap(tMin_x, tMax_x);
+    }
+
+    if (std::abs(ray.direction.y) < 1e-8)
+    {
+        if (ray.origin.y < min_bound.y || ray.origin.y > max_bound.y)
+            return std::nullopt;
+        tMin_y = -1e10;
+        tMax_y = 1e10;
+    }
+    else
+    {
+        tMin_y = (min_bound.y - ray.origin.y) / ray.direction.y;
+        tMax_y = (max_bound.y - ray.origin.y) / ray.direction.y;
+        if (tMin_y > tMax_y)
+            std::swap(tMin_y, tMax_y);
+    }
+
+    if (std::abs(ray.direction.z) < 1e-8)
+    {
+        if (ray.origin.z < min_bound.z || ray.origin.z > max_bound.z)
+            return std::nullopt;
+        tMin_z = -1e10;
+        tMax_z = 1e10;
+    }
+    else
+    {
+        tMin_z = (min_bound.z - ray.origin.z) / ray.direction.z;
+        tMax_z = (max_bound.z - ray.origin.z) / ray.direction.z;
+        if (tMin_z > tMax_z)
+            std::swap(tMin_z, tMax_z);
+    }
+
+    double tMin = std::max({ tMin_x, tMin_y, tMin_z });
+    double tMax = std::min({ tMax_x, tMax_y, tMax_z });
 
     if (tMin > tMax)
-        std::swap(tMin, tMax);
-
-    double tyMin =
-        (min_bound.y - ray.origin.y) / ray.direction.y;
-    double tyMax =
-        (max_bound.y - ray.origin.y) / ray.direction.y;
-
-    if (tyMin > tyMax)
-        std::swap(tyMin, tyMax);
-
-    if ((tMin > tyMax) || (tyMin > tMax))
         return std::nullopt;
-
-    if (tyMin > tMin)
-        tMin = tyMin;
-    if (tyMax < tMax)
-        tMax = tyMax;
-
-    double tzMin = (min_bound.z - ray.origin.z) / ray.direction.z;
-    double tzMax = (max_bound.z - ray.origin.z) / ray.direction.z;
-
-    if (tzMin > tzMax)
-        std::swap(tzMin, tzMax);
-
-    if ((tMin > tzMax) || (tzMin > tMax))
-        return std::nullopt;
-
-    if (tzMin > tMin)
-        tMin = tzMin;
-    if (tzMax < tMax)
-        tMax = tzMax;
 
     if (!ray_int.surrounds(tMin))
     {

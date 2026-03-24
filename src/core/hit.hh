@@ -14,6 +14,8 @@ public:
     double t;
     bool front_face;
     Material *material;
+    double transmittance;
+    bool is_transmission;
 
     Hit()
         : point()
@@ -21,6 +23,7 @@ public:
         , t(0.0)
         , front_face(false)
         , material(nullptr)
+        , transmittance(1.0)
     {}
 
     Hit(Point3 point, Vector3 normal, double t, Material *mat = nullptr)
@@ -29,6 +32,7 @@ public:
         , t(t)
         , front_face(false)
         , material(mat)
+        , transmittance(1.0)
     {}
 
     void set_face_normal(const Ray &ray, const Vector3 &outward_normal)

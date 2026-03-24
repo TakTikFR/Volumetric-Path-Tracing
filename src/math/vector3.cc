@@ -103,6 +103,11 @@ Vector3 Vector3::random_on_hemisphere(const Vector3 &normal)
         return -r;
 }
 
+Vector3 Vector3::cross(const Vector3 &v) const
+{
+    return { y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x };
+}
+
 std::ostream &operator<<(std::ostream &out, const Vector3 &v)
 {
     return out << '<' << v.x << ", " << v.y << ", " << v.z << '>';

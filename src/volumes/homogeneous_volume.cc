@@ -32,7 +32,15 @@ std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray,
     double hit_distance = -1.0 / density_ * std::log(random_double());
 
     if (hit_distance > distance_inside_boundary)
-        return std::nullopt;
+    {
+        double T = std::exp(-density_ * distance_inside_boundary);
+
+        Hit hit(ray.at(hit_out->t), Vector3(1, 0, 0), hit_out->t, material_);
+        hit.front_face = true;
+        hit.transmittance = T;
+        hit.is_transmission = true;
+        return hit;
+    }
 
     double t = hit_in->t + hit_distance / ray_length;
     Point3 point = ray.at(t);
@@ -40,6 +48,8 @@ std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray,
 
     Hit hit(point, n, t, material_);
     hit.front_face = true; // also arbitrary
+    hit.transmittance = std::exp(-density_ * hit_distance);
+    hit.is_transmission = false;
 
     return hit;
 }
