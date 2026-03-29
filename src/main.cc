@@ -15,6 +15,7 @@
 #include "solid_color.hh"
 #include "sphere.hh"
 #include "vector3.hh"
+#include "heterogeneous_volume.hh"
 
 int main()
 {
@@ -54,11 +55,16 @@ int main()
         new Box(Point3(-2.0, 4.89, -4.5), Point3(2.0, 5.0, -0.5), light_mat));
 
     // ─── Homogeneous volume ────────────────────────────────────────────────
-    auto *volume_tex = new NoiseTexture(RGB(255, 255, 255), 1.0);
-    auto *volume_mat = new HenyeyGreenstein(volume_tex, 0.0);
-    auto *boundary =
-        new Box(Point3(-1.0, 0.1, -3.0), Point3(1.0, 2.1, -1.0), white);
-    scene.addObject(new HomogeneousVolume(boundary, 1.0, volume_mat));
+    //auto *volume_tex = new NoiseTexture(RGB(255, 255, 255), 1.0);
+    //auto *volume_mat = new HenyeyGreenstein(volume_tex, 0.0);
+    //auto *boundary = new Box(Point3(-3.0, 1.0, -3.0), Point3(3.0, 4.8, -1.0), nullptr);
+    //scene.addObject(new HomogeneousVolume(boundary, 1.0, volume_mat));
+
+    auto *density_tex = new NoiseTexture(RGB(1.0, 1.0, 1.0), 4.0);
+    auto *volume_mat  = new HenyeyGreenstein(new SolidColor(RGB(1, 1, 1)), 0.0);
+    auto *boundary = new Box(Point3(-3.0, 1.0, -3.0), Point3(3.0, 4.8, -1.0), nullptr);
+
+    scene.addObject(new HeterogeneousVolume(boundary, 2.0, density_tex, volume_mat));
 
     // ─── Camera & Image ────────────────────────────────────────────────────
     constexpr int width = 500;

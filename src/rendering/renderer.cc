@@ -32,29 +32,24 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
     RGB attenuation;
     Ray scattered;
 
-    // Gestion du volume (reste inchangé)
     if (closestHit.is_transmission) {
         return emitted
             + rayColor(Ray(closestHit.point, ray.direction, ray.time), scene, depth - 1)
             * closestHit.transmittance;
     }
 
-    // Si le matériau ne diffuse pas la lumière (ex: c'est une lumière !), on s'arrête.
     if (!material->scatter(ray, closestHit, attenuation, scattered))
         return emitted;
 
-    // ─── 1. ÉCLAIRAGE DIRECT (Next Event Estimation) ───────────────────────
     RGB direct_light(0, 0, 0);
 
     if (!scene.lights.empty()) {
-        Object* light = scene.lights[0]; // On prend la 1ère lumière
+        Object* light = scene.lights[0];
 
-        // A. On tire un point au hasard sur la lumière
         Vector3 to_light = light->random(closestHit.point);
         double distance_to_light = to_light.norm();
         Vector3 light_dir = to_light.normalize();
 
-        // B. Rayon d'ombre ! On s'arrête juste avant de toucher la lumière
         Ray shadow_ray(closestHit.point, light_dir, ray.time);
         interval shadow_int(0.001, distance_to_light - 0.001);
 
@@ -62,21 +57,18 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
         for (Object *obj : scene.objects) {
             if (obj->intersect(shadow_ray, shadow_int)) {
                 in_shadow = true;
-                break; // Un obstacle bloque la lumière !
+                break;
             }
         }
 
-        // C. S'il n'y a pas d'ombre, on calcule l'apport de la lumière
         if (!in_shadow) {
             double pdf = light->pdf_value(closestHit.point, light_dir);
             if (pdf > 0.0) {
                 double cosine = std::max(0.0, closestHit.normal.dot(light_dir));
                 Point3 point_on_light = closestHit.point + to_light;
                 
-                // On récupère la couleur émise (ton RGB de 30, 30, 30)
                 RGB light_color = light->getMaterial()->emitted(point_on_light);
 
-                // L'équation magique du NEE
                 direct_light = RGB(
                         (attenuation.r / 255.0) * light_color.r * cosine / (M_PI * pdf),
                     (attenuation.g / 255.0) * light_color.g * cosine / (M_PI * pdf),
@@ -86,10 +78,8 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
         }
     }
 
-    // ─── 2. ÉCLAIRAGE INDIRECT (Rebond aléatoire) ──────────────────────────
     RGB indirect_light = attenuation * rayColor(scattered, scene, depth - 1);
 
-    // L'image finale est la somme de l'émission, du direct et de l'indirect
     return emitted + direct_light + indirect_light;
 }
 

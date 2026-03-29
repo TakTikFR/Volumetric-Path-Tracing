@@ -4,9 +4,8 @@ LDFLAGS  = -fopenmp
 TARGET   = ray_tracing
 
 SRCS_CC  = $(shell find src/ -name "*.cc")
-SRCS_CPP = $(shell find src/ -name "*.cpp")
 
-OBJS     = $(SRCS_CC:.cc=.o) $(SRCS_CPP:.cpp=.o)
+OBJS     = $(SRCS_CC:.cc=.o)
 DEPS     = $(OBJS:.o=.d)
 
 INC_DIRS = $(shell find src/ -type d)
