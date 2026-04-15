@@ -4,6 +4,7 @@
 #include "camera.hh"
 #include "diffuse_light.hh"
 #include "henyey_greenstein.hh"
+#include "heterogeneous_volume.hh"
 #include "homogeneous_volume.hh"
 #include "image.hh"
 #include "isotropic.hh"
@@ -15,7 +16,6 @@
 #include "solid_color.hh"
 #include "sphere.hh"
 #include "vector3.hh"
-#include "heterogeneous_volume.hh"
 
 int main()
 {
@@ -55,16 +55,47 @@ int main()
         new Box(Point3(-2.0, 4.89, -4.5), Point3(2.0, 5.0, -0.5), light_mat));
 
     // ─── Homogeneous volume ────────────────────────────────────────────────
-    //auto *volume_tex = new NoiseTexture(RGB(255, 255, 255), 1.0);
-    //auto *volume_mat = new HenyeyGreenstein(volume_tex, 0.0);
-    //auto *boundary = new Box(Point3(-3.0, 1.0, -3.0), Point3(3.0, 4.8, -1.0), nullptr);
-    //scene.addObject(new HomogeneousVolume(boundary, 1.0, volume_mat));
+    // // auto *volume_tex = new NoiseTexture(RGB(255, 255, 255), 1.0);
+    // // auto *volume_mat = new HenyeyGreenstein(volume_tex, 0.0);
+    // // auto *boundary = new Box(Point3(-3.0, 1.0, -3.0), Point3(3.0, 4.8,
+    // -1.0),
+    // // nullptr); scene.addObject(new HomogeneousVolume(boundary, 1.0,
+    // // volume_mat));
+    //
+    // Point3 vol_min(-3.0, 1.0, -3.0);
+    // Point3 vol_max(3.0, 4.8, -1.0);
+    // auto *density_tex =
+    //     new NoiseTexture(RGB(1.0, 1.0, 1.0), vol_min, vol_max, 4.0);
+    // // auto *density_tex = new NoiseTexture(RGB(1.0, 1.0, 1.0), vol_min,
+    // vol_max, 10.0); auto *volume_mat = new HenyeyGreenstein(new
+    // SolidColor(RGB(210, 210, 210)), 0.6);
+    // // auto *volume_mat = new HenyeyGreenstein(new SolidColor(RGB(1, 1, 1)),
+    // 0.0); auto *boundary = new Box(vol_min, vol_max, nullptr);
+    //
+    // scene.addObject(
+    //     new HeterogeneousVolume(boundary, 2.0, density_tex, volume_mat));
 
-    auto *density_tex = new NoiseTexture(RGB(1.0, 1.0, 1.0), 4.0);
-    auto *volume_mat  = new HenyeyGreenstein(new SolidColor(RGB(1, 1, 1)), 0.0);
-    auto *boundary = new Box(Point3(-3.0, 1.0, -3.0), Point3(3.0, 4.8, -1.0), nullptr);
+    Point3 vol_min(-2.0, 0.0, -3.5);
+    Point3 vol_max(2.0, 4.0, -1.0);
 
-    scene.addObject(new HeterogeneousVolume(boundary, 2.0, density_tex, volume_mat));
+    // 2. La texture : On garde une base blanche (la couleur sera donnée par le
+    // matériau) J'augmente le scale à 6.0 pour avoir des volutes plus petites
+    // et nerveuses
+    auto *density_tex =
+        new NoiseTexture(RGB(1.0, 1.0, 1.0), vol_min, vol_max, 6.0);
+
+    // 3. Le matériau : C'est ici qu'on donne la couleur du fumigène !
+    // Ex: Un beau fumigène ROUGE vif. g = 0.4 pour que la lumière diffuse bien
+    // à travers.
+    auto *volume_mat =
+        new HenyeyGreenstein(new SolidColor(RGB(220, 40, 40)), 0.4);
+
+    // 4. On crée la boîte
+    auto *boundary = new Box(vol_min, vol_max, nullptr);
+
+    // 5. La densité : On passe de 2.0 (brume) à 15.0 (fumée hyper opaque !)
+    scene.addObject(
+        new HeterogeneousVolume(boundary, 15.0, density_tex, volume_mat));
 
     // ─── Camera & Image ────────────────────────────────────────────────────
     constexpr int width = 500;

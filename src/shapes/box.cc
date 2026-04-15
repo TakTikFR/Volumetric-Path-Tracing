@@ -91,34 +91,38 @@ Vector3 Box::computeNormal(const Point3 &point) const
         return Vector3(0, 0, 1);
     return Vector3(0, 1, 0);
 }
-Vector3 Box::random(const Point3& origin) const 
+Vector3 Box::random(const Point3 &origin) const
 {
-    // On force le point aléatoire sur la face du BAS uniquement (Y = min_bound.y)
+    // Point random pour la lumière sur la face du bas (au lieu de partir random
+    // dans l'espace)
     Point3 random_point;
     random_point.x = random_double(min_bound.x, max_bound.x);
-    random_point.y = min_bound.y; 
+    random_point.y = min_bound.y;
     random_point.z = random_double(min_bound.z, max_bound.z);
 
     return random_point - origin;
 }
 
-double Box::pdf_value(const Point3& origin, const Vector3& direction) const 
+double Box::pdf_value(const Point3 &origin, const Vector3 &direction) const
 {
-    interval shadow_int(0.001, 1e30);
-    std::optional<Hit> rec = this->intersect(Ray(origin, direction), shadow_int);
-    
-    // Si on rate la boîte OU si on ne touche PAS la face du bas (normale 0, -1, 0) : probabilité = 0
+    // proba d'avoir tiré ce rayon vu qu'on force l'aléatoire (pour pas détruire
+    // la moyenne faite ensuite)
+    std::optional<Hit> rec =
+        this->intersect(Ray(origin, direction), interval(0.001, infinity));
+
+    // si on rate la boite ou touche le dessous
     if (!rec || std::abs(rec->normal.y + 1.0) > 1e-3)
-        return 0.0;
+        return 0;
 
     // Surface de la face du bas uniquement
-    double area_y_bottom = (max_bound.x - min_bound.x) * (max_bound.z - min_bound.z);
+    double area_y_bottom =
+        (max_bound.x - min_bound.x) * (max_bound.z - min_bound.z);
 
-    Vector3 impact_vector = rec->point - origin;
-    double distance_squared = impact_vector.dot(impact_vector);
+    double distance_squared = rec->t * rec->t * direction.dot(direction);
     double cosine = std::fabs(direction.normalize().dot(rec->normal));
 
-    if (cosine < 1e-8) return 0.0; 
+    if (cosine < 1e-8)
+        return 0;
 
     return distance_squared / (cosine * area_y_bottom);
 }

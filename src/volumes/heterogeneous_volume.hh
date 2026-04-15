@@ -21,7 +21,7 @@ public:
                                  const interval &ray_int) const override;
 
 private:
-    Object  *boundary_;
-    double   density_majorant_;
+    Object *boundary_;
+    double density_majorant_;
     Texture *density_texture_;
 };

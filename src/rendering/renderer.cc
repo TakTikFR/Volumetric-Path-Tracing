@@ -15,9 +15,11 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
     Hit closestHit;
     bool hitAnything = false;
 
-    for (Object *obj : scene.objects) {
+    for (Object *obj : scene.objects)
+    {
         std::optional<Hit> result = obj->intersect(ray, ray_int);
-        if (result) {
+        if (result)
+        {
             ray_int.max = result->t;
             closestHit = *result;
             hitAnything = true;
@@ -32,19 +34,24 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
     RGB attenuation;
     Ray scattered;
 
-    if (closestHit.is_transmission) {
+    if (closestHit.is_transmission)
+    {
         return emitted
-            + rayColor(Ray(closestHit.point, ray.direction, ray.time), scene, depth - 1)
+            + rayColor(Ray(closestHit.point, ray.direction, ray.time), scene,
+                       depth - 1)
             * closestHit.transmittance;
     }
 
-    if (!material->scatter(ray, closestHit, attenuation, scattered))
+    // NEE
+    if (!material->scatter(ray, closestHit, attenuation,
+                           scattered)) // si c'est une lumière
         return emitted;
 
     RGB direct_light(0, 0, 0);
 
-    if (!scene.lights.empty()) {
-        Object* light = scene.lights[0];
+    if (!scene.lights.empty())
+    {
+        Object *light = scene.lights[0];
 
         Vector3 to_light = light->random(closestHit.point);
         double distance_to_light = to_light.norm();
@@ -54,26 +61,32 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
         interval shadow_int(0.001, distance_to_light - 0.001);
 
         bool in_shadow = false;
-        for (Object *obj : scene.objects) {
-            if (obj->intersect(shadow_ray, shadow_int)) {
+        for (Object *obj : scene.objects)
+        {
+            if (obj->intersect(shadow_ray, shadow_int))
+            {
                 in_shadow = true;
                 break;
             }
         }
 
-        if (!in_shadow) {
+        if (!in_shadow)
+        {
             double pdf = light->pdf_value(closestHit.point, light_dir);
-            if (pdf > 0.0) {
+            if (pdf > 0.0)
+            {
                 double cosine = std::max(0.0, closestHit.normal.dot(light_dir));
                 Point3 point_on_light = closestHit.point + to_light;
-                
+
                 RGB light_color = light->getMaterial()->emitted(point_on_light);
 
-                direct_light = RGB(
-                        (attenuation.r / 255.0) * light_color.r * cosine / (M_PI * pdf),
-                    (attenuation.g / 255.0) * light_color.g * cosine / (M_PI * pdf),
-                    (attenuation.b / 255.0) * light_color.b * cosine / (M_PI * pdf)
-                );
+                // BSDF (Bidirectional Scattering Distribution Function)
+                direct_light = RGB((attenuation.r / 255.0) * light_color.r
+                                       * cosine / (M_PI * pdf),
+                                   (attenuation.g / 255.0) * light_color.g
+                                       * cosine / (M_PI * pdf),
+                                   (attenuation.b / 255.0) * light_color.b
+                                       * cosine / (M_PI * pdf));
             }
         }
     }

@@ -6,8 +6,11 @@
 class NoiseTexture : public Texture
 {
 public:
-    explicit NoiseTexture(const RGB &color, double scale = 1.0)
+    explicit NoiseTexture(const RGB &color, const Point3 &min_bound,
+                          const Point3 &max_bound, double scale = 1.0)
         : color_(color)
+        , min_bound_(min_bound)
+        , max_bound_(max_bound)
         , scale_(scale)
     {}
 
@@ -15,6 +18,8 @@ public:
 
 private:
     RGB color_;
+    Point3 min_bound_;
+    Point3 max_bound_;
     double scale_;
     Perlin noise_;
 };
