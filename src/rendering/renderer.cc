@@ -53,6 +53,7 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
     {
         Object *light = scene.lights[0];
 
+        // échantillonne un point sur la lumière
         Vector3 to_light = light->random(closestHit.point);
         double distance_to_light = to_light.norm();
         Vector3 light_dir = to_light.normalize();
@@ -60,6 +61,7 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
         Ray shadow_ray(closestHit.point, light_dir, ray.time);
         interval shadow_int(0.001, distance_to_light - 0.001);
 
+        // si un objet devant
         bool in_shadow = false;
         for (Object *obj : scene.objects)
         {
@@ -70,6 +72,7 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
             }
         }
 
+        // calcul de la contribution directe
         if (!in_shadow)
         {
             double pdf = light->pdf_value(closestHit.point, light_dir);
@@ -81,6 +84,7 @@ RGB Renderer::rayColor(const Ray &ray, const Scene &scene, int depth) const
                 RGB light_color = light->getMaterial()->emitted(point_on_light);
 
                 // BSDF (Bidirectional Scattering Distribution Function)
+                // bsdf * light * cos(tetha) * pi / pdf
                 direct_light = RGB((attenuation.r / 255.0) * light_color.r
                                        * cosine / (M_PI * pdf),
                                    (attenuation.g / 255.0) * light_color.g
@@ -117,13 +121,13 @@ void Renderer::render(const Scene &scene, const Camera &camera,
     const Vector3 pixel00 =
         viewportUpperLeft + (pixelDeltaU + pixelDeltaV) * 0.5;
 
-    std::cout << "Rendering: " << width << "x" << height << " pixels."
+    std::cout << "Rendu: " << width << "x" << height << " pixels."
               << std::endl;
 
 #pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < height; ++j)
     {
-        std::cout << "\rScanlines remaining: " << (height - j) << ' '
+        std::cout << "\rLignes restantes : " << (height - j) << ' '
                   << std::flush;
         for (int i = 0; i < width; ++i)
         {
@@ -149,5 +153,5 @@ void Renderer::render(const Scene &scene, const Camera &camera,
         }
     }
 
-    std::cout << "\nRender complete!\n";
+    std::cout << "\nRendu terminé\n";
 }

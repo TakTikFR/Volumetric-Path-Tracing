@@ -1,6 +1,8 @@
 #include "image.hh"
 
 #include <cmath>
+#include <fstream>
+#include <stdexcept>
 
 void Image::checkBounds(int x, int y) const
 {
@@ -50,7 +52,6 @@ void Image::save(const std::string &filepath) const
             g_norm = std::sqrt(std::max(0.0, g_norm));
             b_norm = std::sqrt(std::max(0.0, b_norm));
 
-            // 3. On repasse en 0-255 avec le clamp de sécurité
             int ir = static_cast<int>(
                 std::max(0.0, std::min(255.0, r_norm * 255.0)));
             int ig = static_cast<int>(

@@ -93,8 +93,7 @@ Vector3 Box::computeNormal(const Point3 &point) const
 }
 Vector3 Box::random(const Point3 &origin) const
 {
-    // Point random pour la lumière sur la face du bas (au lieu de partir random
-    // dans l'espace)
+    // point random face du bas
     Point3 random_point;
     random_point.x = random_double(min_bound.x, max_bound.x);
     random_point.y = min_bound.y;
@@ -106,7 +105,7 @@ Vector3 Box::random(const Point3 &origin) const
 double Box::pdf_value(const Point3 &origin, const Vector3 &direction) const
 {
     // proba d'avoir tiré ce rayon vu qu'on force l'aléatoire (pour pas détruire
-    // la moyenne faite ensuite)
+    // la moyenne)
     std::optional<Hit> rec =
         this->intersect(Ray(origin, direction), interval(0.001, infinity));
 
@@ -114,7 +113,7 @@ double Box::pdf_value(const Point3 &origin, const Vector3 &direction) const
     if (!rec || std::abs(rec->normal.y + 1.0) > 1e-3)
         return 0;
 
-    // Surface de la face du bas uniquement
+    // surface de la face du bas
     double area_y_bottom =
         (max_bound.x - min_bound.x) * (max_bound.z - min_bound.z);
 

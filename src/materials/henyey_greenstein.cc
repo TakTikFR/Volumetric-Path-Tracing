@@ -7,33 +7,31 @@
 #include "utils.hh"
 #include "vector3.hh"
 
-double pdf_value(const Vector3 &wo, const Vector3 &wi, double g)
-{
-    double cosTheta = wo.normalize().dot(wi.normalize());
-    return (1.0 - g * g)
-        / (4.0 * M_PI * std::pow(1.0 + g * g - 2.0 * g * cosTheta, 1.5));
-}
-
+// Échantillonne une direction selon la fonction de phase henyey_greenstein
 Vector3 hg_sample(const Vector3 direction, double g)
 {
+    // On échantillonne cos(Theta) selon la distribution HG
     double cosTheta;
     if (std::abs(g) < 1e-3)
         cosTheta = 1.0 - 2.0 * random_double();
     else
     {
         double sqr = (1.0 - g * g) / (1.0 - g + 2.0 * g * random_double());
-        cosTheta = (1. - 0 + g * g - sqr * sqr) / (2.0 * g);
+        cosTheta = (1.0 + g * g - sqr * sqr) / (2.0 * g);
     }
 
+    // Conversion en coordonnées sphériques
     double sin_theta = std::sqrt(std::max(0.0, 1.0 - cosTheta * cosTheta));
     double phi = 2.0 * M_PI * random_double();
 
+    // Construction de la base orthonormée
     Vector3 w = direction.normalize();
     Vector3 helper =
         (std::abs(w.x) > 0.9) ? Vector3(0, 1, 0) : Vector3(1, 0, 0);
     Vector3 u = w.cross(helper).normalize();
     Vector3 v = w.cross(u);
 
+    // Direction finale
     return u * sin_theta * std::cos(phi) + v * sin_theta * std::sin(phi)
         + w * cosTheta;
 }

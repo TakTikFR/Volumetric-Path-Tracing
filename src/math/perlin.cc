@@ -71,8 +71,6 @@ double Perlin::noise(const Point3 &point) const
 double Perlin::trilinear_interpolation(Vector3 c[2][2][2], double u, double v,
                                        double w)
 {
-    // Smoothstep: (3t^2 - 2t^3)
-    // casser l'aspect rond et organique
     double uu = u * u * (3 - 2 * u);
     double vv = v * v * (3 - 2 * v);
     double ww = w * w * (3 - 2 * w);
@@ -97,22 +95,6 @@ double Perlin::trilinear_interpolation(Vector3 c[2][2][2], double u, double v,
         }
     }
     return accum;
-}
-
-double Perlin::turbulance(const Point3 &p, int depth) const
-{
-    double accum = 0.0;
-    Point3 temp_p = p;
-    double weight = 1.0;
-
-    for (int i = 0; i < depth; i++)
-    {
-        accum += weight * noise(temp_p);
-        weight *= 0.5;
-        temp_p = temp_p * 2;
-    }
-
-    return std::fabs(accum);
 }
 
 double Perlin::fbm(const Point3 &p, int depth) const

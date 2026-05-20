@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ostream>
-#include <stdexcept>
 
 class Point3;
 

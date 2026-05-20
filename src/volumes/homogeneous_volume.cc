@@ -44,10 +44,10 @@ std::optional<Hit> HomogeneousVolume::intersect(const Ray &ray,
 
     double t = hit_in->t + hit_distance / ray_length;
     Point3 point = ray.at(t);
-    Vector3 n = Vector3(1, 0, 0); // arbitrary
+    Vector3 n = Vector3(1, 0, 0);
 
     Hit hit(point, n, t, material_);
-    hit.front_face = true; // also arbitrary
+    hit.front_face = true;
     hit.transmittance = std::exp(-density_ * hit_distance);
     hit.is_transmission = false;
 
