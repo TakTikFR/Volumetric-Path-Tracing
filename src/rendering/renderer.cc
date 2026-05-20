@@ -121,8 +121,7 @@ void Renderer::render(const Scene &scene, const Camera &camera,
     const Vector3 pixel00 =
         viewportUpperLeft + (pixelDeltaU + pixelDeltaV) * 0.5;
 
-    std::cout << "Rendu: " << width << "x" << height << " pixels."
-              << std::endl;
+    std::cout << "Rendu: " << width << "x" << height << " pixels." << std::endl;
 
 #pragma omp parallel for schedule(dynamic)
     for (int j = 0; j < height; ++j)
